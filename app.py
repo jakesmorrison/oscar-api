@@ -1,6 +1,12 @@
 from flask import Flask
-app = Flask(__name__)
+from flask_admin import Admin
 
-@app.route('/')
-def hello_world():
-    return 'Hello Sammy!'
+import orm
+
+app = Flask(__name__)
+app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+admin = Admin(app, name='microblog', template_mode='bootstrap3')
+
+from views import blueprints
+for bp in blueprints: 
+    app.register_blueprint(bp)    
