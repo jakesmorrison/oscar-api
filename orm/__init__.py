@@ -1,7 +1,9 @@
 from ._session import (
     Session, 
     session, 
-    query
+    query,
+    postUser,
+    postWinners
 )
 
 from ._tables import (

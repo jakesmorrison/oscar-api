@@ -16,7 +16,19 @@ def user_selections (user):
 @orm.Session()
 def oscar_winners ():
     year = datetime.datetime.now().year
-    query = "SELECT Year,Cat,Name,Weight WHERE Year={} FROM oscar_winners".format(year)
+    query = "SELECT Year,Cat,Name,Weight FROM oscar_winners WHERE Year={}".format(year)
     return orm.query(query)
 
+@orm.Session()
+def submit_choices (data):
+    user = data['user']
+    win = data['win']
+    fav = data['fav']
+    year = datetime.datetime.now().year
+    return orm.postUser(user, year, win, fav)
+
+@orm.Session()
+def setup_winners (cat):
+    year = datetime.datetime.now().year
+    return orm.postWinners(year, cat)
 

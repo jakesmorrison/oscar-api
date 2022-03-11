@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, json, request
-from queries.oscar import oscar_categories, user_selections, oscar_winners
+from queries.oscar import setup_winners, oscar_categories, user_selections, oscar_winners, submit_choices
 from app import admin
 import orm
 from flask_admin.contrib.sqla import ModelView
@@ -28,5 +28,22 @@ def get_current_user_selections ():
 def set_current_user_selections ():
     d = request.data.decode('UTF-8')
     d = json.loads(d)
-    print(d)
-    return 'pass'
+    r = submit_choices(d)
+    return r
+
+@bp.route('/api/getWinners', methods=['GET'])
+def get_winners ():
+    df = pd.DataFrame(oscar_winners(), columns=['Year', 'Cat', 'Name', 'Weight'])
+    # If the dataFrame is empty we need to populate the winners with empty data. 
+    if df.empty == True:
+        df_cat = pd.DataFrame(oscar_categories(), columns=['Year', 'Cat', 'Name'])
+        setup_winners(list(df_cat['Cat'].unique()))
+        df = pd.DataFrame(oscar_winners(), columns=['Year', 'Cat', 'Name', 'Weight'])
+        return df.to_json(orient="records")
+    else:
+        return df.to_json(orient="records")
+
+@bp.route('/api/getLeaderboard', methods=['GET'])
+def get_leaderboard ():
+    df = pd.DataFrame(oscar_categories(), columns=['Year', 'Cat', 'Name'])
+    return df.to_json(orient="records")

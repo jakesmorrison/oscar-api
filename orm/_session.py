@@ -48,3 +48,36 @@ def query(sql):
     c = conn.cursor()
     c.execute(sql)
     return c.fetchall()
+
+@Session()
+def postUser(user, year, win, fav):
+    conn = session.connection().engine.raw_connection()
+    c = conn.cursor()
+    for cat in win.keys():
+        if cat in win and cat in fav:
+            c.execute('INSERT INTO oscar_users (User, Year, Cat, Won, Favorite) VALUES (?, ?, ?, ?, ?)', 
+            (user, year, cat, win[cat], fav[cat]))
+        else: 
+            if cat in win:
+                c.execute('INSERT INTO oscar_users (User, Year, Cat, Won, Favorite) VALUES (?, ?, ?, ?, ?)', 
+                (user, year, cat, win[cat], ''))
+            elif cat in fav:
+                c.execute('INSERT INTO oscar_users (User, Year, Cat, Won, Favorite) VALUES (?, ?, ?, ?, ?)', 
+                (user, year, cat, '', fav[cat]))
+    conn.commit()
+    # conn.close()
+    return 'posted'
+
+@Session()
+def postWinners(year, cat):
+    conn = session.connection().engine.raw_connection()
+    c = conn.cursor()
+    for ca in cat:
+        c.execute('INSERT INTO oscar_winners (Cat, Year, Name, Weight) VALUES (?, ?, ?, ?)', 
+        (ca, year, '', 1))
+    conn.commit()
+    # conn.close()
+    return 'posted'
+
+
+
