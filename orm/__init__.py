@@ -3,7 +3,7 @@ from ._session import (
     session, 
     query,
     postUser,
-    postWinners
+    postWinners,
 )
 
 from ._tables import (

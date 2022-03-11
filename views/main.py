@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, json, request
-from queries.oscar import setup_winners, oscar_categories, user_selections, oscar_winners, submit_choices
+from queries.oscar import setup_winners, oscar_leaders, oscar_categories, user_selections, oscar_winners, submit_choices
 from app import admin
 import orm
 from flask_admin.contrib.sqla import ModelView
@@ -45,5 +45,4 @@ def get_winners ():
 
 @bp.route('/api/getLeaderboard', methods=['GET'])
 def get_leaderboard ():
-    df = pd.DataFrame(oscar_categories(), columns=['Year', 'Cat', 'Name'])
-    return df.to_json(orient="records")
+    return oscar_leaders().to_json(orient="records")

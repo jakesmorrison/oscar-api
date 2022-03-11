@@ -1,5 +1,7 @@
 import orm
 import datetime
+import pandas as pd
+import numpy as np
 
 @orm.Session()
 def oscar_categories ():
@@ -31,4 +33,21 @@ def submit_choices (data):
 def setup_winners (cat):
     year = datetime.datetime.now().year
     return orm.postWinners(year, cat)
+    
+@orm.Session()
+def oscar_leaders():
+    year = datetime.datetime.now().year
+    query = "SELECT User,Cat,Favorite,Won FROM oscar_users WHERE Year={}".format(year)
+    df_users = pd.DataFrame(orm.query(query), columns=['User', 'Cat', 'Favorite', 'Won'])
 
+    query = "SELECT Cat,Name,Weight FROM oscar_winners WHERE Year={}".format(year)
+    df_winners = pd.DataFrame(orm.query(query), columns=['Cat', 'Name', 'Weight'])
+
+    df_merge = df_users.merge(df_winners, left_on='Cat', right_on='Cat', how='outer')
+    del df_merge["Favorite"]
+    df_merge = df_merge.reset_index()
+
+    df_merge["Points"] = np.where((df_merge['Won'] == df_merge['Name']), 1*df_merge["Weight"], 0)
+    df_merge = df_merge[df_merge["Points"]>0]
+    rankings = df_merge.groupby(["User"]).agg({'Points': ['count', 'sum']}).reset_index()
+    return rankings
