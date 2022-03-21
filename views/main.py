@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, json, request
-from queries.oscar import setup_winners, oscar_leaders, oscar_categories, user_selections, oscar_winners, submit_choices
+from queries.oscar import setup_winners, oscar_leaders, oscar_categories, user_selections, oscar_winners, submit_choices, oscar_favorites
 from app import admin
 import orm
 from flask_admin.contrib.sqla import ModelView
@@ -29,7 +29,7 @@ def set_current_user_selections ():
     d = request.data.decode('UTF-8')
     d = json.loads(d)
     r = submit_choices(d)
-    return r
+    return json.dumps({'status': r})
 
 @bp.route('/api/getWinners', methods=['GET'])
 def get_winners ():
@@ -46,3 +46,7 @@ def get_winners ():
 @bp.route('/api/getLeaderboard', methods=['GET'])
 def get_leaderboard ():
     return oscar_leaders().to_json(orient="records")
+
+@bp.route('/api/getFavorite', methods=['GET'])
+def get_favorite ():
+    return oscar_favorites().to_json(orient="records")

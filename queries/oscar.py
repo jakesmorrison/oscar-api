@@ -53,3 +53,15 @@ def oscar_leaders():
     rankings.columns = ['User', 'Correct Answers', 'Total Points']
     rankings.sort_values(['Total Points', 'Correct Answers'])
     return rankings
+
+@orm.Session()
+def oscar_favorites():
+    year = datetime.datetime.now().year
+    query = "SELECT User,Cat,Favorite,Won FROM oscar_users WHERE Year={}".format(year)
+    df_users = pd.DataFrame(orm.query(query), columns=['User', 'Cat', 'Favorite', 'Won'])
+    rankings = df_users.groupby(['Cat', 'Favorite'])['User'].count().reset_index()
+    rankings = rankings.groupby('Cat').max().reset_index()
+    rankings.columns = ['Category', 'Name', 'Votes']
+    rankings.sort_values(['Votes'])
+    return rankings
+
