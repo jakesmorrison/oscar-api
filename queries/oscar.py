@@ -48,7 +48,7 @@ def oscar_leaders():
     df_merge = df_merge.reset_index()
 
     df_merge["Points"] = np.where((df_merge['Won'] == df_merge['Name']), 1*df_merge["Weight"], 0)
-    # df_merge = df_merge[df_merge["Points"]>0]
+    df_merge = df_merge[df_merge["Points"]>0]
     rankings = df_merge.groupby(["User"]).agg({'Points': ['count', 'sum']}).reset_index()
     rankings.columns = ['User', 'Correct Answers', 'Total Points']
     rankings.sort_values(['Total Points', 'Correct Answers'])
