@@ -62,6 +62,6 @@ def oscar_favorites():
     rankings = df_users.groupby(['Cat', 'Favorite'])['User'].count().reset_index()
     rankings = rankings.groupby('Cat').max().reset_index()
     rankings.columns = ['Category', 'Name', 'Votes']
-    rankings.sort_values(['Votes'])
+    rankings = rankings.sort_values(['Votes'])
     return rankings
 

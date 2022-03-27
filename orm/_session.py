@@ -1,11 +1,7 @@
 from contextlib import ContextDecorator
-
 from sqlalchemy.orm.session import Session as ORM_Session
-
 from werkzeug.local import LocalProxy
-
 from ._engine import engine
-
 
 class Session (ContextDecorator):
     _session_instance = None
