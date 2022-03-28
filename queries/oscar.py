@@ -51,7 +51,7 @@ def oscar_leaders():
     df_merge = df_merge[df_merge["Points"]>0]
     rankings = df_merge.groupby(["User"]).agg({'Points': ['count', 'sum']}).reset_index()
     rankings.columns = ['User', 'Correct Answers', 'Total Points']
-    rankings.sort_values(['Total Points', 'Correct Answers'])
+    rankings = rankings.sort_values(['Total Points', 'Correct Answers'])
     return rankings
 
 @orm.Session()
